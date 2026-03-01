@@ -28,8 +28,8 @@
     ],
     "rules": [
       {
-        "outbound": "any",
-        "server": "local-dns"
+        "server": "local-dns",
+        "rewrite_ttl": 20
       }
     ],
     "strategy": "ipv4_only"
