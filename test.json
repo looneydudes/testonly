@@ -5,22 +5,18 @@
   "dns": {
     "servers": [
       {
-        "tag": "google-dns",
-        "address": "https://dns.google/dns-query",
+        "tag": "cloudflare-dns",
+        "address": "https://1.1.1.1/dns-query",
         "detour": "rootgroup"
       },
       {
         "tag": "local-dns",
-        "address": "8.8.8.8",
+        "address": "1.1.1.1",
         "detour": "direct"
       }
     ],
-    "rules": [
-      {
-        "outbound": "any",
-        "server": "local-dns"
-      }
-    ]
+    "final": "cloudflare-dns",
+    "strategy": "ipv4_only"
   },
   "inbounds": [
     {
@@ -38,12 +34,18 @@
     {
       "type": "selector",
       "tag": "rootgroup",
-      "outbounds": ["root-proxy", "direct"]
+      "outbounds": [
+        "root-proxy",
+        "direct"
+      ]
     },
     {
       "type": "selector",
       "tag": "interceptgroup",
-      "outbounds": ["intercept-proxy", "direct"]
+      "outbounds": [
+        "intercept-proxy",
+        "direct"
+      ]
     },
     {
       "type": "http",
@@ -60,24 +62,25 @@
     {
       "type": "direct",
       "tag": "direct"
-    },
-    {
-      "type": "dns",
-      "tag": "dns-out"
     }
   ],
   "route": {
     "rules": [
       {
         "protocol": "dns",
-        "outbound": "dns-out"
+        "action": "hijack-dns"
       },
       {
-        "domain": ["ifconfig.me", "api.ipify.org"],
+        "domain": [
+          "ifconfig.me",
+          "api.ipify.org"
+        ],
         "outbound": "interceptgroup"
       },
       {
-        "domain_suffix": ["googlevideo.com"],
+        "domain_keyword": [
+          "video"
+        ],
         "outbound": "interceptgroup"
       }
     ],
