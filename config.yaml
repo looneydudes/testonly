@@ -20,28 +20,30 @@ dns:
       - 240.0.0.0/4
 
 proxies:
-  - name: "ifconfig-proxy"
+  - name: "root-proxy"
     type: http
     server: 31.59.20.176
     port: 6754
-  - name: "default-proxy"
+  - name: "intercept-proxy"
     type: http
     server: 23.95.150.145
     port: 6114
 
 proxy-groups:
-  - name: "default"
+  - name: "rootgroup"
     type: select
     proxies:
-      - "default-proxy"
-      - "ifconfig-proxy"
+      - "root-proxy"
+  - name: "interceptgroup"
+    type: select
+    proxies:
+      - "intercept-proxy"
 
 rules:
   # Specific rule for ifconfig.me
-  - DOMAIN,ifconfig.me,ifconfig-proxy
-  
-  # Rule for all YouTube/Google video subdomains (e.g., rr1---sn-xxx.googlevideo.com)
-  - DOMAIN-SUFFIX,googlevideo.com,default
+  - DOMAIN,ifconfig.me,interceptgroup
+  - DOMAIN,api.ipify.org,interceptgroup
+  - DOMAIN-SUFFIX,googlevideo.com,interceptgroup
   
   # The "catch-all" rule set to DIRECT instead of a proxy
-  - MATCH,DIRECT
+  - MATCH,rootgroup
