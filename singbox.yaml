@@ -1,0 +1,75 @@
+{
+  "log": {
+    "level": "info"
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "google-dns",
+        "address": "https://dns.google/dns-query",
+        "detour": "rootgroup"
+      },
+      {
+        "tag": "cloudflare-dns",
+        "address": "https://1.1.1.1/dns-query",
+        "detour": "rootgroup"
+      },
+      {
+        "tag": "local-dns",
+        "address": "8.8.8.8",
+        "detour": "direct"
+      }
+    ],
+    "rules": [
+      {
+        "outbound": "any",
+        "server": "local-dns"
+      }
+    ],
+    "strategy": "ipv4_only"
+  },
+  "inbounds": [
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "rootgroup",
+      "outbounds": ["root-proxy", "direct"]
+    },
+    {
+      "type": "selector",
+      "tag": "interceptgroup",
+      "outbounds": ["intercept-proxy", "direct"]
+    },
+    {
+      "type": "http",
+      "tag": "root-proxy",
+      "server": "31.59.20.176",
+      "server_port": 6754
+    },
+    {
+      "type": "http",
+      "tag": "intercept-proxy",
+      "server": "23.95.150.145",
+      "server_port": 6114
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "domain": ["ifconfig.me", "api.ipify.org"],
+        "outbound": "interceptgroup"
+      },
+      {
+        "domain_suffix": ["googlevideo.com"],
+        "outbound": "interceptgroup"
+      }
+    ],
+    "final": "rootgroup",
+    "auto_detect_interface": true
+  }
+}
