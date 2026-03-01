@@ -50,18 +50,12 @@
     {
       "type": "selector",
       "tag": "rootgroup",
-      "outbounds": [
-        "root-proxy",
-        "direct"
-      ]
+      "outbounds": ["root-proxy", "direct"]
     },
     {
       "type": "selector",
       "tag": "interceptgroup",
-      "outbounds": [
-        "intercept-proxy",
-        "direct"
-      ]
+      "outbounds": ["intercept-proxy", "direct"]
     },
     {
       "type": "http",
@@ -78,29 +72,20 @@
     {
       "type": "direct",
       "tag": "direct"
-    },
-    {
-      "type": "dns",
-      "tag": "dns-out"
     }
   ],
   "route": {
     "rules": [
       {
         "protocol": "dns",
-        "outbound": "dns-out"
+        "action": "hijack-dns"
       },
       {
-        "domain": [
-          "ifconfig.me",
-          "api.ipify.org"
-        ],
+        "domain": ["ifconfig.me", "api.ipify.org"],
         "outbound": "interceptgroup"
       },
       {
-        "domain_suffix": [
-          "googlevideo.com"
-        ],
+        "domain_suffix": ["googlevideo.com"],
         "outbound": "interceptgroup"
       }
     ],
