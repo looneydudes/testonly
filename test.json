@@ -5,41 +5,23 @@
   "dns": {
     "servers": [
       {
+        "tag": "cloudflare",
+        "address": "1.1.1.1",
+        "detour": "proxy-b"
+      },
+      {
         "tag": "google-dns",
-        "type": "https",
-        "server": "dns.google",
-        "server_port": 443,
-        "detour": "rootgroup"
-      },
-      {
-        "tag": "cloudflare-dns",
-        "type": "https",
-        "server": "1.1.1.1",
-        "server_port": 443,
-        "detour": "rootgroup"
-      },
-      {
-        "tag": "local-dns",
-        "type": "udp",
-        "server": "8.8.8.8",
-        "server_port": 53,
-        "detour": "direct"
+        "address": "8.8.8.8",
+        "detour": "proxy-b"
       }
-    ],
-    "rules": [
-      {
-        "server": "local-dns",
-        "rewrite_ttl": 20
-      }
-    ],
-    "strategy": "ipv4_only"
+    ]
   },
   "inbounds": [
     {
       "type": "tun",
       "tag": "tun-in",
       "interface_name": "tun0",
-      "address": "172.19.0.1/30",
+      "inet4_address": "172.19.0.1/30",
       "auto_route": true,
       "strict_route": true,
       "stack": "system",
@@ -48,48 +30,40 @@
   ],
   "outbounds": [
     {
-      "type": "selector",
-      "tag": "rootgroup",
-      "outbounds": ["root-proxy", "direct"]
-    },
-    {
-      "type": "selector",
-      "tag": "interceptgroup",
-      "outbounds": ["intercept-proxy", "direct"]
+      "type": "http",
+      "tag": "proxy-b",
+      "server": "203.177.32.214",
+      "server_port": 8000
     },
     {
       "type": "http",
-      "tag": "root-proxy",
-      "server": "31.59.20.176",
-      "server_port": 6754
-    },
-    {
-      "type": "http",
-      "tag": "intercept-proxy",
-      "server": "23.95.150.145",
-      "server_port": 6114
+      "tag": "proxy-a",
+      "server": "203.177.42.213",
+      "server_port": 8000
     },
     {
       "type": "direct",
       "tag": "direct"
+    },
+    {
+      "type": "dns",
+      "tag": "dns-out"
     }
   ],
   "route": {
     "rules": [
       {
         "protocol": "dns",
-        "action": "hijack-dns"
+        "outbound": "dns-out"
       },
       {
-        "domain": ["ifconfig.me", "api.ipify.org"],
-        "outbound": "interceptgroup"
-      },
-      {
-        "domain_suffix": ["googlevideo.com"],
-        "outbound": "interceptgroup"
+        "domain_suffix": [
+          "ifconfig.me",
+          "ipify.org"
+        ],
+        "outbound": "proxy-a"
       }
     ],
-    "final": "rootgroup",
     "auto_detect_interface": true
   }
 }
