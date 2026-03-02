@@ -40,16 +40,14 @@
       "type": "selector",
       "tag": "rootgroup",
       "outbounds": [
-        "root-proxy",
-        "direct"
+        "root-proxy"
       ]
     },
     {
       "type": "selector",
       "tag": "interceptgroup",
       "outbounds": [
-        "intercept-proxy",
-        "direct"
+        "intercept-proxy"
       ]
     },
     {
