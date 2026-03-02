@@ -10,6 +10,11 @@
         "detour": "rootgroup"
       },
       {
+        "tag": "google-dns",
+        "address": "https://8.8.8.8/dns-query",
+        "detour": "rootgroup"
+      },  
+      {
         "tag": "local-dns",
         "address": "1.1.1.1",
         "detour": "direct"
@@ -79,7 +84,7 @@
       },
       {
         "domain_keyword": [
-          "video"
+          "googlevideo"
         ],
         "outbound": "interceptgroup"
       }
